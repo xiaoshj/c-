@@ -1,0 +1,36 @@
+#include<stdio.h>
+#include<Windows.h>
+#include<graphics.h>
+#pragma comment(lib, "WINMM.LIB")
+int length = 640;
+int width = 480;
+void initgraph() {
+	initgraph(length, width);
+	IMAGE img;
+	loadimage(&img, "./22.jpg");
+	putimage(0, 0, &img);
+
+}
+void play()
+{
+
+	char buf[10000] = "";
+	char buf1[10000] = "";
+
+	DWORD M1 = mciSendString("open yan.mp3 alias a", NULL, 0, NULL);
+	int temp = mciGetErrorString(M1, buf, 10000);
+	DWORD m2 = mciSendString("play a", NULL, 0, NULL);//播放
+	mciGetErrorString(m2, buf, 10000);
+	
+}
+
+int main()
+{
+	initgraph();
+	play();		
+	while (1);
+	
+	
+	return 0;
+}
+© 2020 GitHub, Inc.
