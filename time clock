@@ -1,0 +1,80 @@
+#define _CRT_SECURE_NO_WARNINGS//关闭安全检查
+
+#include<stdio.h>
+#include<conio.h>
+#include<math.h>
+#include<graphics.h>
+#define PI 3.1415926
+void DrawHand(int Hour,int Minute, int Second)
+{
+	double a_hour, a_min, a_sec;//时，分，秒的弧度值
+	int x_hour, y_hour, x_min, y_min, x_sec, y_sec;//时分秒的末端位置
+	//计算时，分，秒针的末端位置
+	//360=2*pi/60==每一格的弧度，乘以秒数等于当前秒数弧度
+	a_sec = Second*(2 * PI / 60);
+	a_min = Minute*(2 * PI / 60) + a_sec / 60;
+	a_hour = Hour*(2 * PI / 12) + a_min / 12;
+	//计算时，分，秒针的末端位置
+	//120秒针的长度，100分针的长度，70秒的长度
+	x_sec = 120 * sin(a_sec);
+	y_sec = 120 * cos(a_sec);
+	x_min = 100 * sin(a_min);
+	y_min = 100 * cos(a_min);
+	x_hour = 70 * sin(a_hour);
+	y_hour = 70 * cos(a_hour);
+	//画分针
+	setlinestyle(PS_SOLID, 6);
+	setlinecolor(WHITE);
+	line(320 + x_hour, 240 - y_hour, 320 - x_hour / 7, 240 + y_hour / 7);
+	//画分针
+	setlinestyle(PS_SOLID, 4);
+	setlinecolor(LIGHTGRAY);
+	line(320 + x_min, 240 - y_min, 320 - x_hour / 7, 240 + y_hour / 7);
+	//画秒针
+	setlinestyle(PS_SOLID, 2);
+	setlinecolor(RED);
+	line(320 + x_sec, 240 - y_sec, 320 - x_sec / 3, 240 + y_sec / 3);
+
+
+
+}
+void DrawDail() {
+	cleardevice();
+	const char *title = "time clock";
+	settextstyle(20, 0, "楷体");
+	outtextxy(getwidth() / 2 - textwidth(title) / 2, 10, title);//居中显示
+	//绘制表盘
+	setlinestyle(PS_SOLID, 1);
+	setlinecolor(WHITE);
+	circle(320, 240, 2);
+	circle(320, 240, 60);
+	circle(320, 240, 160);
+	outtextxy(296, 310, "Relex");
+	//绘制刻度
+	int x, y;//刻度位置
+	for (int i = 0;i < 60;i++) {
+		x = 320 + (int)(145 * sin(i*PI * 2 / 60));
+		y = 240 + (int)(145 * cos(i*PI * 2 / 60));
+		if (i % 15 == 0)
+			solidrectangle(x - 5, y - 5, x + 5, y + 5);
+		else if (i % 5 == 0)
+			circle(x, y, 3);
+		else
+			putpixel(x, y, WHITE);
+	}
+}
+int main()
+{
+	initgraph(640, 480, 0);
+	SYSTEMTIME ti;
+	BeginBatchDraw();//开启双缓冲绘图
+	while (!_kbhit())//按任意键退出
+	{
+		DrawDail();//绘制表盘
+		GetLocalTime(&ti);
+		DrawHand(ti.wHour, ti.wMinute, ti.wSecond);
+		FlushBatchDraw();//刷新出图
+	}
+	closegraph();
+	return 0;
+}
